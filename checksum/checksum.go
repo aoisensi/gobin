@@ -23,13 +23,14 @@ var (
 )
 
 func init() {
-	cryptos = make(map[string]func() hash.Hash)
-	cryptos["md5"] = func() hash.Hash { return md5.New() }
-	cryptos["sha1"] = func() hash.Hash { return sha1.New() }
-	cryptos["sha256"] = func() hash.Hash { return sha256.New() }
-	cryptos["sha224"] = func() hash.Hash { return sha256.New224() }
-	cryptos["sha512"] = func() hash.Hash { return sha512.New() }
-	cryptos["sha384"] = func() hash.Hash { return sha512.New384() }
+	cryptos = map[string]func() hash.Hash{
+		"md5":    func() hash.Hash { return md5.New() },
+		"sha1":   func() hash.Hash { return sha1.New() },
+		"sha256": func() hash.Hash { return sha256.New() },
+		"sha224": func() hash.Hash { return sha256.New224() },
+		"sha512": func() hash.Hash { return sha512.New() },
+		"sha384": func() hash.Hash { return sha512.New384() },
+	}
 }
 
 func main() {
