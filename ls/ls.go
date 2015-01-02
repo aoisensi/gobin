@@ -7,6 +7,14 @@ import (
 	"os"
 )
 
+var (
+	flagA bool
+)
+
+func init() {
+	flag.BoolVar(&flagA, "A", false, "all")
+}
+
 func main() {
 	flag.Parse()
 	paths := flag.Args()
@@ -19,6 +27,9 @@ func main() {
 		os.Exit(-1)
 	}
 	for _, file := range files {
-		fmt.Println(file.Name())
+		name := file.Name()
+		if flagA || name[0] != '.' {
+			fmt.Println(file.Name())
+		}
 	}
 }
