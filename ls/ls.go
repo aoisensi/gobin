@@ -5,14 +5,19 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 )
 
 var (
-	flagA bool
+	flagAlmostAll bool
+	flagLong      bool
+	flagPerm      bool
 )
 
 func init() {
-	flag.BoolVar(&flagA, "A", false, "all")
+	flag.BoolVar(&flagAlmostAll, "A", false, "Almost All")
+	flag.BoolVar(&flagLong, "l", false, "Show All Info (same -P)")
+	flag.BoolVar(&flagPerm, "P", false, "Show File Permission")
 }
 
 func main() {
@@ -28,8 +33,31 @@ func main() {
 	}
 	for _, file := range files {
 		name := file.Name()
-		if flagA || name[0] != '.' {
-			fmt.Println(file.Name())
+		if flagAlmostAll || name[0] != '.' {
+			mess := toMessage(file)
+			fmt.Println(strings.Join(mess, " "))
 		}
 	}
+}
+
+func flagCheck() {
+	if flagLong {
+		flagPerm = true
+	}
+}
+
+func toMessage(file os.FileInfo) []string {
+	result := []string{file.Name()}
+	if flagLong {
+		result = append(parsePerm(file), result...)
+	}
+	return result
+}
+
+func parsePerm(file os.FileInfo) []string {
+	r := file.Mode().Perm().String()
+	if file.Mode().IsDir() {
+		r = "d" + r[1:]
+	}
+	return []string{r}
 }
