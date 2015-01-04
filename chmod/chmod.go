@@ -4,6 +4,6 @@ import "flag"
 
 func main() {
 	flag.Parse()
-	args := flag.Args()
+	//args := flag.Args()
 
 }
