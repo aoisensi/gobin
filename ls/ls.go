@@ -11,13 +11,11 @@ import (
 var (
 	flagAlmostAll bool
 	flagLong      bool
-	flagPerm      bool
 )
 
 func init() {
 	flag.BoolVar(&flagAlmostAll, "A", false, "Almost All")
 	flag.BoolVar(&flagLong, "l", false, "Show All Info (same -P)")
-	flag.BoolVar(&flagPerm, "P", false, "Show File Permission")
 }
 
 func main() {
@@ -41,23 +39,31 @@ func main() {
 }
 
 func flagCheck() {
-	if flagLong {
-		flagPerm = true
-	}
 }
 
 func toMessage(file os.FileInfo) []string {
-	result := []string{file.Name()}
+	var result []string
 	if flagLong {
-		result = append(parsePerm(file), result...)
+		result = []string{
+			parsePerm(file),
+			parseTime(file),
+			file.Name(),
+		}
+	} else {
+		result = []string{file.Name()}
 	}
 	return result
 }
 
-func parsePerm(file os.FileInfo) []string {
+func parsePerm(file os.FileInfo) string {
 	r := file.Mode().Perm().String()
 	if file.Mode().IsDir() {
 		r = "d" + r[1:]
 	}
-	return []string{r}
+	return r
+}
+
+func parseTime(file os.FileInfo) string {
+	r := file.ModTime()
+	return r.String()
 }
